@@ -80,9 +80,9 @@ while True:
         last = name
         lasttime = datetime.now()
 
-        command = 'rsync\ -PvarH\ {}\ {}'.format(name, folder).replace("'", r"\\\'")
+        command = 'rsync -PvarH {} {}'.format(name, folder).replace("'", r"\'")
         if not args['no_tmux']:
-            command = 'tmux send-keys -t rsync {} c-m'.format(command.replace(' ', r' '))
+            command = 'tmux send-keys -t rsync "{}" c-m'.format(command.replace(' ', r' '))
 
         watcher.info('Running command: {}'.format(command))
 
