@@ -4,11 +4,12 @@ import pexpect
 import argparse
 import subprocess
 
-
 import logging
 import logging.handlers as handlers
 
 from datetime import datetime
+from StringIO import StringIO
+from csv import reader
 
 parser = argparse.ArgumentParser(description='Watches a directory for changes, then syncs those changes to another '
                                              'directory.')
@@ -71,7 +72,8 @@ while True:
     inotify.expect('\r\n', timeout=None)
     event = inotify.before
     watcher.debug(event)
-    output = event.split(',')
+    output = reader(StringIO(event)).next()  # This will work until I get pyinotify working.
+    watcher.debug(output)
     name = output[0] + output[-1]
     folder = output[0].replace(OLDDIR, NEWDIR)
     delta = datetime.now() - lasttime
