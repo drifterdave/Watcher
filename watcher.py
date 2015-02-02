@@ -7,8 +7,6 @@ import subprocess
 import logging
 import logging.handlers as handlers
 
-from datetime import datetime
-
 parser = argparse.ArgumentParser(description='Watches a directory for changes, then syncs those changes to another '
                                              'directory.')
 parser.add_argument('-s', '--source-directory', help='Path you want to watch for changes.', required=True)
@@ -49,9 +47,6 @@ if not args['quiet']:
 
 
 # Begin Watching for Files
-
-
-lasttime = datetime.now()
 watcher.info("Watches established.")
 
 wm = pyinotify.WatchManager()
@@ -71,7 +66,6 @@ class EventHandler(pyinotify.ProcessEvent):
         watcher.info('Running command: {}'.format(command))
 
         subprocess.Popen(shlex.split(command), stdin=None, stdout=None, stderr=None)
-
 
     def process_IN_MOVED(self, event):
         self.process_IN_CLOSE_WRITE(event)
