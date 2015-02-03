@@ -51,24 +51,27 @@ watcher.info("Watches established.")
 
 wm = pyinotify.WatchManager()
 # noinspection PyUnresolvedReferences
-mask = pyinotify.IN_CLOSE_WRITE | pyinotify.IN_MOVED_TO
+mask = pyinotify.ALL_EVENTS  # pyinotify.IN_CLOSE_WRITE | pyinotify.IN_MOVED_TO
 
 
 class EventHandler(pyinotify.ProcessEvent):
     def process_IN_CLOSE_WRITE(self, event):
         watcher.debug(event)
         to_folder = event.path.replace(OLDDIR, NEWDIR) + '/'
-        watcher.info('Syncing change: {}'.format(event.pathname))
+        # watcher.info('Syncing change: {}'.format(event.pathname))
         command = 'rsync -PvarH {} {}'.format(event.pathname, to_folder).replace("'", r"\'").replace("&", r"\&")
         if not args['no_tmux']:
             command = 'tmux send-keys -t rsync "{}" c-m'.format(command.replace(' ', r' '))
 
-        watcher.info('Running command: {}'.format(command))
+            #watcher.info('Running command: {}'.format(command))
 
-        subprocess.Popen(shlex.split(command), stdin=None, stdout=None, stderr=None)
+            #subprocess.Popen(shlex.split(command), stdin=None, stdout=None, stderr=None)
 
     def process_IN_MOVED(self, event):
         self.process_IN_CLOSE_WRITE(event)
+
+    def process_default(self, event):
+        watcher.debug(event)
 
 
 notifier = pyinotify.ThreadedNotifier(wm, EventHandler())
