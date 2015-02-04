@@ -1,4 +1,5 @@
 import sys
+import time
 import shlex
 import argparse
 import pyinotify
@@ -63,9 +64,9 @@ class EventHandler(pyinotify.ProcessEvent):
         if not args['no_tmux']:
             command = 'tmux send-keys -t rsync "{}" c-m'.format(command.replace(' ', r' '))
 
-            watcher.info('Running command: {}'.format(command))
-
-            subprocess.Popen(shlex.split(command), stdin=None, stdout=None, stderr=None)
+        watcher.info('Running command: {}'.format(command))
+        time.sleep(10)  # Sleep to wait for Sonarr to apply permissions...
+        subprocess.Popen(shlex.split(command), stdin=None, stdout=None, stderr=None)
 
     def process_IN_MOVED(self, event):
         self.process_IN_CLOSE_WRITE(event)
